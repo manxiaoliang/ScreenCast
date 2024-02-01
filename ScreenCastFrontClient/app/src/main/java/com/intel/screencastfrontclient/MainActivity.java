@@ -9,46 +9,40 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.os.IBinder;
+import android.os.ServiceManager;
 import android.os.RemoteException;
 import android.content.Context;
 import java.util.regex.Pattern;
 
-// import com.intel.screencastfrontclient.databinding.ActivityMainBinding;
-
 public class MainActivity extends AppCompatActivity {
 
-    // private ActivityMainBinding binding;
     private boolean state = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // mContext = getApplicationContext();
-        // binding = ActivityMainBinding.inflate(getLayoutInflater());
-        // setContentView(binding.getRoot());
+
         setContentView(R.layout.activity_main);
-        // Example of a call to a native method
-        // TextView tv = binding.sampleText;
+
         TextView tv = (TextView)findViewById(R.id.sample_text);
         tv.setText(CastJNILib.stringFromJNI());
-        EditText et = (EditText)findViewById(R.id.edit_text_1);
-        String[] texts = et.getText().toString().split(":");
-
-        boolean isValid = IPAddressValidator.isValidIPAddress(texts[0]);
-        if(! isValid)
-            Log.e("IP", "Is not a valid ip address");
-
-        int port = Integer.parseInt(texts[1]);
-        if(port < 0 || port > 65535)
-            Log.e("Port", "Is not a valid port num");
-
-//        CastJNILib.init(texts[0],port);
 
         Button connect_btn = (Button) findViewById(R.id.btn_1);
         connect_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                CastJNILib.init(texts[0],port);
-                Log.d("BUTTONS", "User tapped the Supabutton");
+
+                EditText et = (EditText)findViewById(R.id.edit_text_1);
+                String text = et.getText().toString();
+                boolean isValid = IPAddressValidator.isValidIPAddress(text);
+                if(! isValid)
+                    Log.e("IP", "Is not a valid ip address");
+        
+                int port = 6999;
+                if(port < 0 || port > 65535)
+                    Log.e("Port", "Is not a valid port num");
+                
+                CastJNILib.init(text,port);
+
             }
         });
 
@@ -64,13 +58,9 @@ public class MainActivity extends AppCompatActivity {
                     control_btn.setText("START CAST");
                 }
                 state = !state;
-
-                Log.d("BUTTONS", "User tapped the Supabutton");
             }
         });
-
     }
-
 
     public static class IPAddressValidator {
         private static final String IP_ADDRESS_PATTERN =
@@ -84,9 +74,4 @@ public class MainActivity extends AppCompatActivity {
             return pattern.matcher(ipAddress).matches();
         }
     }
-
-    /**
-     * A native method that is implemented by the 'screencastfrontclient' native library,
-     * which is packaged with this application.
-     */
 }

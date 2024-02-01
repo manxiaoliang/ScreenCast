@@ -54,7 +54,6 @@ cc_library_shared {
         "app/src/main/cpp/native-lib.cpp",
         "app/src/main/cpp/tcp_stream_socket_client.cc",
         "app/src/main/cpp/cast_controller.cc",
-
     ],
     local_include_dirs:["app/src/main/cpp"],
     header_libs: ["jni_headers"],

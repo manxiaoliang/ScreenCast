@@ -2,8 +2,7 @@ package com.intel.screencastfrontclient;
 
 public class CastJNILib {
     static {
-       System.loadLibrary("CastFrontClientJni");
-        // System.loadLibrary("screencastfrontclient");
+        System.loadLibrary("CastFrontClientJni");
     }
 
     public static native String stringFromJNI();

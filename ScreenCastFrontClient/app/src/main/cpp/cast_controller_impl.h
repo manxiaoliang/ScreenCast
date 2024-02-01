@@ -40,21 +40,19 @@ namespace vcast {
             IOResult start() {
                 std::string error_msg = "";
                 int try_times = 0;
-
                 while (try_times < mConnectTimes && mStatusCode != 1 ) {
-                    LOGD("try_times %d socket_client_->Connect() ",try_times);
+                    LOGD("try_times %d cast_controller_impl start() ",try_times);
                     auto[connected, error_msg] = socket_client_->Connect();
                     mStatusCode = connected;
                     if (!connected) {
                         LOGE("error: %s Failed to connect to Game Server. Retry after 1s...\n", error_msg.c_str());
-                        std::this_thread::sleep_for(6s);
+                        std::this_thread::sleep_for(1s);
                         try_times++;
                         continue;
                     }
                     else
                         break;
                 }
-                // mStatusCode = 1;
                 LOGD("start is: %s", "successful!");
                 return {mStatusCode, error_msg};
             }
@@ -99,7 +97,7 @@ namespace vcast {
             std::unique_ptr <IStreamSocketClient> socket_client_;
             struct TcpConfigInfo mInfo;
             int mStatusCode;
-            const int mConnectTimes = 3;
+            const int mConnectTimes = 2;
         };
     }
 }
