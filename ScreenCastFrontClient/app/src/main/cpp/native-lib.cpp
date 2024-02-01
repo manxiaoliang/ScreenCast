@@ -14,7 +14,7 @@ extern "C" {
 JNIEXPORT jstring JNICALL Java_com_intel_screencastfrontclient_CastJNILib_stringFromJNI(JNIEnv* env,jobject obj);
 JNIEXPORT void JNICALL Java_com_intel_screencastfrontclient_CastJNILib_startCast(JNIEnv* env,jobject obj);
 JNIEXPORT void JNICALL Java_com_intel_screencastfrontclient_CastJNILib_stopCast(JNIEnv* env,jobject obj);
-JNIEXPORT void JNICALL Java_com_intel_screencastfrontclient_CastJNILib_init(JNIEnv* env,jobject obj);
+JNIEXPORT void JNICALL Java_com_intel_screencastfrontclient_CastJNILib_init(JNIEnv* env,jobject obj,jstring ip,jint port);
 };
 
 JNIEXPORT jstring JNICALL Java_com_intel_screencastfrontclient_CastJNILib_stringFromJNI(JNIEnv* env,jobject /* this */) {
@@ -22,11 +22,20 @@ JNIEXPORT jstring JNICALL Java_com_intel_screencastfrontclient_CastJNILib_string
     return env->NewStringUTF(hello.c_str());
 }
 
-JNIEXPORT void JNICALL Java_com_intel_screencastfrontclient_CastJNILib_init(JNIEnv* env,jobject obj) { 
+JNIEXPORT void JNICALL Java_com_intel_screencastfrontclient_CastJNILib_init(JNIEnv* env,jobject obj,jstring ip,jint port) {
     system("'/system/bin/hw/probe-node'");
+
     vcast::client::TcpConfigInfo cfg;
-    cfg.tcp_conn_info.ip_addr = "127.0.0.1";
-    cfg.tcp_conn_info.port = 6999;
+    const char* str;
+    jboolean iscopy = false;
+    str = env->GetStringUTFChars(ip, &iscopy);
+    if(str == NULL) {
+        LOGE("The Ip address is wrong");
+    }
+    std::string ipaddr(str);
+    cfg.tcp_conn_info.ip_addr = ipaddr;
+    cfg.tcp_conn_info.port = port;
+    LOGE("The Ip address is ip = %s,port = %d",ipaddr.c_str(),port);
     mCastController = std::make_unique<vcast::client::CastController>(cfg);
     if (mCastController)
     {
